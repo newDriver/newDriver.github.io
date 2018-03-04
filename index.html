@@ -79,16 +79,16 @@
 
 
 
-<meta name="description" content="前端开发">
+<meta name="description" content="前端开发 个人博客">
 <meta property="og:type" content="website">
-<meta property="og:title" content="newDriver&#39;s blog">
+<meta property="og:title" content="newDriver&#39;s blogs">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="newDriver&#39;s blog">
-<meta property="og:description" content="前端开发">
+<meta property="og:site_name" content="newDriver&#39;s blogs">
+<meta property="og:description" content="前端开发 个人博客">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="newDriver&#39;s blog">
-<meta name="twitter:description" content="前端开发">
+<meta name="twitter:title" content="newDriver&#39;s blogs">
+<meta name="twitter:description" content="前端开发 个人博客">
 
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>newDriver's blog</title>
+  <title>newDriver's blogs</title>
   
 
 
@@ -155,12 +155,12 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">newDriver's blog</span>
+        <span class="site-title">newDriver's blogs</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
       
-        <p class="site-subtitle">王亚杰的个人博客</p>
+        <p class="site-subtitle">王亚杰的博客</p>
       
   </div>
 
@@ -241,7 +241,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="newDriver's blog">
+      <meta itemprop="name" content="newDriver's blogs">
     </span>
 
     
@@ -303,7 +303,21 @@
       
         
           
-            <h1 id="md语法简单了解"><a href="#md语法简单了解" class="headerlink" title="md语法简单了解"></a>md语法简单了解</h1><h1 id="转义符"><a href="#转义符" class="headerlink" title="转义符 \"></a>转义符 \</h1><h1 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h1><h5 id="一行-可以直接用括起来"><a href="#一行-可以直接用括起来" class="headerlink" title="一行 可以直接用括起来"></a>一行 可以直接用<code></code>括起来</h5><p>` <code>&lt;mark&gt; 标记&lt;/mark&gt;</code> `<br><mark> 标记</mark></p>
+            <h1 id="搭建过程简述与md语法简单了解"><a href="#搭建过程简述与md语法简单了解" class="headerlink" title="搭建过程简述与md语法简单了解"></a>搭建过程简述与md语法简单了解</h1><blockquote>
+<p>相关技术：git 、node 、hexo<br>    github仓库创建<br>    使用gitpage为博客提供在线浏览服务<br>    使用hexo生成静态文件<br>    将静态文件推送到gitpage进行展示<br>  遇到的问题：</p>
+<ol>
+<li>git仓库命名<blockquote>
+<p>仓库命名不能像之前的个人练习一样 需要按照固定的格式命名才可以被hexo部署时推送到<br>推送发布需要修改对应的仓库配置<br>根目录_config.yml的最后一块代码</p>
+</blockquote>
+</li>
+</ol>
+</blockquote>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">	  deploy:</span><br><span class="line">type: git</span><br><span class="line">repository: https://github.com/newDriver/newDriver.github.io.git # 可选择同时部署到 GitHub 和 coding 或者只部署到 Github</span><br><span class="line">  # github: git@github.com:你的GitHub名/你的GitHub名.github.io.git</span><br><span class="line">  # coding: git@git.coding.net:你的Coding名/你的Coding名.git</span><br><span class="line">branch: master</span><br></pre></td></tr></table></figure>
+<ol>
+<li>next主题修改为中文配置的误解<br>看官方文档调试一直误以为是修改thems里的_config.yml的languages<br>各种修改调试未能修改主题的语种，还直接在thems里的_config.yml修改menusetting的Key为中文以达到显示效果 (如改home为主页)<br>最后在论坛上搜索到直接改根目录的language为themes里的语种类型即可 ，同时自己查看了themes配置文件的language注释    <code>language:   # Force language, or auto switch by theme</code>也发现其实需要修改的不是此处<br>简单总结 ： 在直接上手没做过的项目时 ，出现问题后对官方文档的翻阅及相关文件的解释说明一定要用心去看 ，而不是依靠自己的简单理解去猜，实践固然重要，但也要往对的方向去做才能出对的结果。</li>
+</ol>
+<hr>
+<h1 id="转义符"><a href="#转义符" class="headerlink" title="转义符 \"></a>转义符 \</h1><h1 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h1><h5 id="一行-可以直接用括起来"><a href="#一行-可以直接用括起来" class="headerlink" title="一行 可以直接用括起来"></a>一行 可以直接用<code></code>括起来</h5><p>` <code>&lt;mark&gt; 标记&lt;/mark&gt;</code> `<br><mark> 标记</mark></p>
 <h4 id="多行可以使用3个-闭合包裹"><a href="#多行可以使用3个-闭合包裹" class="headerlink" title="多行可以使用3个`闭合包裹"></a>多行可以使用3个`闭合包裹</h4><p>例如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div &gt;</span><br><span class="line">	&lt;a href=&quot;#&quot;&gt;测试多行&lt;/a&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
 <div><br>    <a href="#">测试多行</a><br></div>
 
@@ -412,7 +426,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">newDriver</p>
-              <p class="site-description motion-element" itemprop="description">前端开发</p>
+              <p class="site-description motion-element" itemprop="description">前端开发 个人博客</p>
           </div>
 
           <nav class="site-state motion-element">
