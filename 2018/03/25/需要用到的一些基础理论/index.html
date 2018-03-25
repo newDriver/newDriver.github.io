@@ -89,7 +89,7 @@ color="0,0,255" opacity='0.7' zIndex="299" count="99" src="//cdn.bootcss.com/can
 <meta property="og:site_name" content="newDriver&#39;s blogs">
 <meta property="og:description" content="可视化工具开发的个人思路相关技术：面向对象编程 事件的判断与封装处理 canvas webgl 元素拖拽">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-25T10:27:42.027Z">
+<meta property="og:updated_time" content="2018-03-25T15:48:21.593Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="需要用到的一些基础理论">
 <meta name="twitter:description" content="可视化工具开发的个人思路相关技术：面向对象编程 事件的判断与封装处理 canvas webgl 元素拖拽">
@@ -449,8 +449,15 @@ console.log(dog1 instanceof Person); //false
 function sayHello (sayContent){}{
     console.log(&quot;大家好！我是&quot;+this.name+&quot;，今年&quot;+this.age+&quot;我要说&quot;+this.sayContent);
 }
-</code></pre><p>将sayHello设置成全局函数 这样新生成的实例访问的都是同一个函数。<br>但在全局作用域中定义了一个实际仅预提供给Person使用的函数，在全局作用域中定义了仅供特定对象使用的方法，当要处理的方法量较多时 这个解决方案就和要实现的封装相悖。这里可以通过原型来解决此问题。<br><strong>原型模式</strong><br>通过函数的prototype（原型）属性，实现属性和方法的共享<br>    function person(name,age){}<br>        person.prototype.name=name;<br>        person.prototype.age=age;<br>        person.prototype.sayHello=function(sayContent){<br>           console.log(“大家好！我是”+ this.name+”，今年”+ this.age+”我要说”+sayContent);<br>    }</p>
-<pre><code>var person1=new person();
+</code></pre><p>将sayHello设置成全局函数 这样新生成的实例访问的都是同一个函数。<br>但在全局作用域中定义了一个实际仅预提供给Person使用的函数，在全局作用域中定义了仅供特定对象使用的方法，当要处理的方法量较多时 这个解决方案就和要实现的封装相悖。这里可以通过原型来解决此问题。<br><strong>原型模式</strong><br>通过函数的prototype（原型）属性，实现属性和方法的共享 </p>
+<pre><code>function person(name,age){}
+    person.prototype.name=name;
+    person.prototype.age=age;
+    person.prototype.sayHello=function(sayContent){
+       console.log(&quot;大家好！我是&quot;+ this.name+&quot;，今年&quot;+ this.age+&quot;我要说&quot;+sayContent);
+}
+
+var person1=new person();
 var person2=new person();
 person1.name=&apos;test1&apos;;
 
@@ -492,8 +499,206 @@ var dog2 = new Dog(20);
 console.log(dog1.say == dog2.say);//true
 dog1.say();//年龄18
 dog2.say();//年龄20
-</code></pre><p>混合模式中使用构造函数用于定义实例的属性，使用原型模式用于定义方法和一些共享的属性。每个实例都会有自己的属性，但同时又共享着方法，最大限度的节省了内存。另外这种模式还支持传递初始参数。</p>
-<h4 id="事件的判断与封装处理"><a href="#事件的判断与封装处理" class="headerlink" title="事件的判断与封装处理"></a>事件的判断与封装处理</h4>
+</code></pre><p>混合模式中使用构造函数用于定义实例的属性，使用原型模式用于定义方法和一些共享的属性。每个实例都会有自己的属性，但同时又共享着方法，最大限度的节省了内存。另外这种模式还支持传递初始参数。<br><strong>附上原型链及其相关属性和方法</strong><br>    每个对象都有一个对应的原型对象，二这个原型对象本身也是一个对象，既然是对象，那么也会有相应的对象，依次类推直到Object.prototype为止，Object.prototype的原型对象为null<br>    通过以上分析，原型对象之间会形成一条“链子”，这条“链子”，就是我们所说的原型链</p>
+<pre><code>原型链有一个非常重要的特性，当我们使用某个对象的属性或方法时，首先去对当前对象内部查找是否有该属性或方法，如果有则拿来使用，如果没有，则沿着原型链取查找当前对象的原型对象是否有该属性或方法，如果有则用如果没有则沿着原型链继续往上找，一处类推，直到找到Object.prototype为止。
+//对象字面量
+var obj = {} ;    //等于 var obj = new object();
+//obj 继承了Object.prototype的属性和方法
+
+// 生成的原型链：
+// obj---&gt;Object.prototype----&gt;null
+// 数组
+var arr = [] ; //等价于var arr = new Array();
+// arr 继承了Array.prototype的属性和方法
+// 生成的原型链：
+// arr ---&gt;Array.prototype----&gt;Object.prototype---&gt;null
+
+// 函数
+var fn = function () {} //等价于vat fn = new Function()
+// fn继承了Function.prototype的属性和方法
+// 生成的原型链：、
+// fn---&gt;Function.prototype----&gt;Object.prototype---&gt;null
+// 构造函数
+var Person = function(){};
+var person = new Person();
+// Person继承了Person.prototype的属性和方法
+// 生成的原型链：
+// 、person---&gt;Person.prototype---&gt;Object.prototype---&gt;null
+
+console.log(person.toString());
+/**********相关属性和方法*********************/
+
+Object.create(obj): 这个方法可以用来创建对象，所创建出来的对象继承与参数对象也就是说，参数对象是创建出来的对象的原型对象，所以创建出来的对象可以使用参数对象中的属性或方法。
+var a = {
+    name : &quot;罗纳尔多&quot;
+}
+//通过Object.create方法创建一个对象，a是b的原型对象
+var b = Object.create(a);
+//生成的原型链 
+// b---》a----&gt;Object.prototype---&gt;null
+console.log(b.name);
+
+b.name = &quot;梅西&quot;;  //修改属性后继承修改后的属性
+b.age = 18 ; //动态添加属性
+//通过Object.create方法创建一个对象,b是c的原型对象
+var c = Object.create(b);
+//生成的原型链：
+//c ---&gt; b ---&gt; a---&gt;Object.prototype----&gt;null
+console.log(c);
+console.log(c.name);
+console.log(c.age);
+
+var d = Object.create(null);
+//生成原型链
+//d ---&gt; null
+console.log(d); //等价于Object{}
+
+constructor属性：每个原型对象都有一个constructor属性constroctor属性指向的是该原型对象所在的构造函数。
+//注意 constructor不是person的对象属性，而是他原型对象的属性
+console.log(Person.prototype.constructor);
+console.log(person.constructor);    //原型链指向 是原型对象的
+
+对象.hasOwnProperty(属性名) ：判断某个对象是否有某个属性
+// 验证constructor到底是谁的属性？
+console.log(Person.prototype.hasOwnProperty(&quot;constructor&quot;)); //true
+console.log(person.hasOwnProperty(&quot;constructor&quot;));  //false
+
+Object.getPrototypeOf(对象)：返回一个参数对象非原型对象
+console.log(Object.getPrototypeOf(c)); //b
+
+console.log(Object.getPrototypeOf(Object.getPrototypeOf(c))) ; //a
+
+原型对象.isPrototypeOf(对象)：验证一个对象是否是另外一个对象的原型对象。
+console.log(b.isPrototypeOf(c)); //true
+console.log(a.isPrototypeOf(c));  //true
+</code></pre><h5 id="面向对象三大特性：封装，多态，继承。"><a href="#面向对象三大特性：封装，多态，继承。" class="headerlink" title="面向对象三大特性：封装，多态，继承。"></a>面向对象三大特性：封装，多态，继承。</h5><pre><code>继承：当我们解决某个问题的时候，会遇到很多类，这些类会有一些相同的属性（特征）或方法（行为），我们可以把这些属性和方法提取到父类里。只要继承于这个父类，父类里的方法和属性，所有的子类都可以使用。
+
+// JS里没有真正的继承 类式--假继承
+
+类式继承：就是在子类的构造函数中调用父类的构造函数，这样就可以继承下来父类的属性和方法。
+注意：这类继承方式是一种“假继承”，最后的父类不是子类。
+（例如：正常的继承的话 学生是一个人，但是这种方式的最后表达的思想是，学生是学生，人是人），不能继承父类原型链上的东西（原型属性和方法）。
+
+// 父类（超类、基类）的构造函数
+function Person(name){
+    this.name = name ;
+    this.say = function(){
+        console.log(&quot;名字：&quot;+this.name);
+    }
+}
+
+Person.prototype.protosay= function(){
+    console.log(&quot;原型名字：&quot;+this.name)
+}
+// 子类构造函数
+function Student(){
+    Person.call(this);
+}
+//创建一个学生对象
+ var student1 = new Student(&quot;梅西&quot;);
+ console.log(student1);
+ student1.say();
+ // student1.protosay();
+ console.log(student1.hasOwnProperty(&quot;name&quot;)); // true有这个原型属性
+ console.log(student1 instanceof Student); //true
+ console.log(student1 instanceof Person);//false 学生是学生对象 不属于人的对象
+</code></pre><h5 id="原型继承，是JS中继承的雏形，父类的属性和方法无法继承-只是可以使用-，但父类原型链上的属性和方法我们是可以继承的。继承最后可以达到（学生是学生，人是人）"><a href="#原型继承，是JS中继承的雏形，父类的属性和方法无法继承-只是可以使用-，但父类原型链上的属性和方法我们是可以继承的。继承最后可以达到（学生是学生，人是人）" class="headerlink" title="原型继承，是JS中继承的雏形，父类的属性和方法无法继承(只是可以使用)，但父类原型链上的属性和方法我们是可以继承的。继承最后可以达到（学生是学生，人是人）"></a>原型继承，是JS中继承的雏形，父类的属性和方法无法继承(只是可以使用)，但父类原型链上的属性和方法我们是可以继承的。继承最后可以达到（学生是学生，人是人）</h5><pre><code>注意：原型继承需要通过设置子类的原型对象来实现（维护继承的关系）
+
+/ 父类
+function Person(name){
+    this.name = name ;
+    this.say = function(){
+        console.log(&quot;姓名：&quot;+this.name)
+    }        
+}
+
+Person.prototype.proSay = function(){
+    console.log(&quot;原型姓名：&quot;+this.name)
+}
+// 子类
+function Student(){
+
+}
+
+//维护关系 //注释后不再继承Person
+Student.prototype = new Person(&quot;大学霸&quot;);
+//修改 原型对象的 构造器constructor
+Student.prototype.constructor = Student;
+
+//创建一个学生对象
+var student1 = new Student();
+student1.say();        //姓名：大学霸
+student1.proSay(); //原型姓名：大学霸
+console.log(student1.name);  //大学霸
+
+student1.name = &quot;学霸&quot;; //动态添加自己的属性
+console.log(student1.hasOwnProperty(&quot;name&quot;)); //false
+console.log(student1.constructor);
+console.log(Student.prototype.constructor);
+//证明继承关系
+console.log(student1 instanceof Student); //学生是学生
+console.log(student1 instanceof Person); //学生还是人 继承了
+&gt;#### 事件的判断与封装处理
+</code></pre><p><strong>基础知识：DOM事件</strong></p>
+<pre><code>&lt;div id=&quot;box&quot;&gt;
+    &lt;input type=&quot;text&quot;&gt;
+&lt;/div&gt;
+&lt;button onclick=&quot;cloneDiv()&quot;&gt;克隆&lt;/button&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var oDiv = document.getElementById(&quot;box&quot;)
+    oDiv.onclick =function(){
+        var btn =document.createElement(&quot;button&quot;);
+        document.body.replaceChild(btn,this);
+    }
+    function cloneDiv(){
+        // cloneNode()克隆节点及其属性 浅度克隆
+        // cloneNode(true)克隆节点及其属性和后代,不可以克隆事件处理程序 深度克隆
+        var newDiv =oDiv.cloneNode(true);
+        console.log(newDiv);
+        document.body.appendChild(newDiv)
+    }
+// 元素节点的属性
+    // offsetParent--当前元素节点的非静态定位的父节点position(static/relertive/absolute)
+    // parseInt(getStyle(oDiv,&quot;width&quot;)) ======oDiv.offsetWidth
+    // offsetWidth--当前节点的 宽度 ，不带单位number类型
+    // offsetHeight--当前节点的高度
+    // offsetLeft--当前节点左边距
+    // offsetTop--当前节点的上边距
+&lt;/script&gt;
+</code></pre><p><strong>鼠标事件</strong>  </p>
+<pre><code>click点击事件 
+mouseover 当鼠标从元素外部进入元素内部时，会触发
+mouseout 当鼠标从元素内部离开时会触发
+mousemove 鼠标在元素内部移动 反复触发
+mousedown 当鼠标在元素内部按下
+mouseup当鼠标在元素内部抬起
+</code></pre><p><strong>键盘事件</strong>  </p>
+<pre><code>//keydown 按下加盘任意键 会被反复调用
+// keyup 抬起键盘的任意键 会被反复调用
+// keypress  按下键盘的非ctrl/shift /caplock/numberlock等非键盘功能键 会被反复调用
+// 一般绑定在 document上
+
+
+// 只要出发了事件就会产生一个事件对象
+// 事件包含了本次事件的所有信息
+// 在事件处理程序中来获取事件对象
+document.onkeydown = function(){
+    // 非ie浏览器下使用形参event/e
+    // ie window.event
+    var evt = window.event||e;
+    console.log(evt);
+    console.log(&quot;按下&quot;);
+    console.log(evt.ctrlKey,evt.altKey,evt.shiftKey,evt.keyCode);
+}
+document.onkeyup = function(){
+    console.log(&quot;抬起&quot;)
+}
+document.onkeypress = function(){
+    console.log(&quot;按下键盘的非ctrel/shift /caplock/numberlock等非键盘功能键&quot;)
+}
+</code></pre><p><strong>事件的处理方式</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"> 1.直接在html标签中给与实践处理程序同名的 属性值js代码</span><br><span class="line">  &lt;button id=&quot;btn&quot; onclick=&quot;alert(&apos;欢迎&apos;);console.log(&apos;欢迎！&apos;);console.log(&apos;this&apos;)&quot;&gt;点我！&lt;/button&gt;</span><br><span class="line"> 2.改与实践处理程序同名的属性赋值一个函数调用语句</span><br><span class="line"> &lt;button onclick=&quot;fun(this)&quot;&gt;点我&lt;/button&gt;</span><br><span class="line"> function fun (this)&#123;</span><br><span class="line">		// 复制到函数内this指的是button</span><br><span class="line">		 console.log(this); //this指的是windows</span><br><span class="line">	&#125;</span><br><span class="line"> 3.DOM0级事件处理程序 </span><br><span class="line"> &lt;button id=&quot;btn3&quot;&gt;点我3&lt;/button&gt; </span><br><span class="line">  var oBtn3 = document.getElementById(&quot;btn3&quot;);</span><br><span class="line">  oBtn3.onclick=function()&#123;console.log(this); //指的是button3&#125;</span><br><span class="line">  // 添加多个相应=函数时 最后的函数覆盖前边的函数</span><br><span class="line">  //移除事件处理程序 oBtn3.onclick =null; //null对象指针为空</span><br><span class="line"> 4. DOM2级事件处理程序 &lt;button id=&quot;btn4&quot;&gt;点我4！&lt;/button&gt;</span><br><span class="line">  var oBtn4 = document.getElementById(&quot;btn4&quot;);</span><br><span class="line">	// 添加事件监听器 元素节点.addEventListener(&quot;事件名&quot;，响应事件的函数，布尔值)</span><br><span class="line">	// 事件名 click mouseover</span><br><span class="line">	// 函数 可以是函数名或者匿名函数</span><br><span class="line">	// 事件流 false </span><br><span class="line">	oBtn4.addEventListener(&quot;click&quot;,fun5,false)</span><br><span class="line">	可同时调用多函数个</span><br><span class="line">	oBtn4.addEventListener(&quot;click&quot;,fun4,false)</span><br><span class="line">	function fun4()&#123;</span><br><span class="line"></span><br><span class="line">		console.log(this) //button4</span><br><span class="line">		console.log(&quot;DOM2事件处理程序，是目前最流行的事件处理程序，各大主流浏览器全部支持&quot;)</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">	function fun5()&#123;</span><br><span class="line">		console,log(&quot;fun5&quot;)</span><br><span class="line">	&#125;</span><br><span class="line">// 移除事件处理程序(参数眼与添加处理程序参数一致，第二个参数必须是函数名)</span><br><span class="line">oBtn4.removeEventListener(&quot;click&quot;,fun4,false);</span><br></pre></td></tr></table></figure></p>
+<p><strong>事件流</strong></p>
+
       
     </div>
     
@@ -639,7 +844,7 @@ dog2.say();//年龄20
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化工具开发的个人思路"><span class="nav-number">1.</span> <span class="nav-text"> 可视化工具开发的个人思路</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关技术："><span class="nav-number">1.1.</span> <span class="nav-text">相关技术：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#面向对象编程"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">面向对象编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事件的判断与封装处理"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">事件的判断与封装处理</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化工具开发的个人思路"><span class="nav-number">1.</span> <span class="nav-text"> 可视化工具开发的个人思路</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关技术："><span class="nav-number">1.1.</span> <span class="nav-text">相关技术：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#面向对象编程"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">面向对象编程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#面向对象三大特性：封装，多态，继承。"><span class="nav-number">1.1.0.1.1.</span> <span class="nav-text">面向对象三大特性：封装，多态，继承。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原型继承，是JS中继承的雏形，父类的属性和方法无法继承-只是可以使用-，但父类原型链上的属性和方法我们是可以继承的。继承最后可以达到（学生是学生，人是人）"><span class="nav-number">1.1.0.1.2.</span> <span class="nav-text">原型继承，是JS中继承的雏形，父类的属性和方法无法继承(只是可以使用)，但父类原型链上的属性和方法我们是可以继承的。继承最后可以达到（学生是学生，人是人）</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
